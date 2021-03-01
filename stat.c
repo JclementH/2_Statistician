@@ -140,6 +140,7 @@ int selection(int sel, int stat) {
 						return 0;
 					}
 					removE(head, x);
+					displayData(head);
 					printf("\n");
 					break;
 		case 5	:	if(stat == 1) {
@@ -186,7 +187,23 @@ void add(Statistician s, int x) {
 }
 
 void removE(Statistician s, int x) {
+	nodePtr tem = s, prn;
+	if(tem != NULL && tem->item == x) {
+		s = tem->next;
+		free(tem);
+		return;
+	}
 	
+	while(tem != NULL && tem->item != x) {
+		prn = tem;
+		tem = tem->next;
+	}
+	if(tem == NULL) {
+		return;
+	}
+	
+	prn->next = tem->next;
+	free(tem);
 }
 
 void displayData(Statistician s) {
@@ -199,19 +216,19 @@ void displayData(Statistician s) {
 	}
 	//Otherwise
 	ptr = ptr->next;
-	printf("STATISTICIAN DATA: ");
+	printf("STATISTICIAN DATA : ");
 	while(ptr != NULL) {
 		printf("%i ", ptr->item);
 		ptr = ptr->next;
 	}
 	//
+	sort(s);
 	min = minimum(s);
 	max = maximum(s);
 	range(s, min, max);
 	len = mean(s);
-	printf("\nLengthd\t: %i", len);
 	median(s, len);
-	mode(s);
+	mode(s, len);
 	variance(s);
 	standardDeviation(s);
 	//
@@ -229,7 +246,7 @@ int minimum(Statistician s) {
 		}
 		ptr = ptr->next;
 	}
-	printf("\nMinimum\t: %i", min);
+	printf("\nMinimum\t\t  : %i", min);
 	//
 	return min;
 }
@@ -245,7 +262,7 @@ int maximum(Statistician s) {
 		}
 		ptr = ptr->next;
 	}
-	printf("\nMaximum\t: %i", max);
+	printf("\nMaximum\t\t  : %i", max);
 	//
 	return max;
 }
@@ -254,12 +271,11 @@ int range(Statistician s, int min, int max) {
 	int ran = 0;
 	ran = max - min;
 	
-	printf("\nRange\t: %i", ran);
+	printf("\nRange\t\t  : %i", ran);
 }
 
 float mean(Statistician s) {
-	float sum = 0, mea = 0, n = 0;
-	int N = 0;
+	float sum = 0, n = 0;
 	nodePtr ptr = s;
 	ptr = ptr->next;
 	
@@ -269,57 +285,128 @@ float mean(Statistician s) {
 		n++;
 	}
 	mea = sum / n;
-	printf("\nMean\t: %f", mea);
+	printf("\nMean\t\t  : %f", mea);
 	//
-	N = n;
-	printf("\nLengthr\t: %i", N);
-	return N;
+	return n;
 }
 
 float median(Statistician s, int len) {
-	int hln = 0;
-	float med = 0;
-	nodePtr ptr = s;
-	ptr = ptr->next;
+	nodePtr fptr = (nodePtr)malloc(sizeof(struct node));
+	nodePtr sptr = (nodePtr)malloc(sizeof(struct node));
 	
-	printf("\nLengthm\t: %i", len);
+	fptr = s->next;
+	sptr = s->next;
 	
-	hln = len / 2;
-	if((hln % 2) == 0) {
-		printf("\t\t\t2\tHln: %i", hln);
-		int pln = hln - 1;
-		float pmd = 0;
-		
-		for(int i = 0; i <= hln; i++) {
-			med = ptr->item;
-			if(i == pln) {
-				pmd = ptr->item;
-			}
-			ptr = ptr->next;
+	float med, hmd;
+	
+	if(len % 2 == 0) {
+		while(fptr != NULL && fptr->next != NULL) {
+			fptr = fptr->next->next;
+			hmd = sptr->item;
+			sptr = sptr->next;
 		}
-		med = (pmd + med) / 2;
-		
-		printf("\nMedian2\t: %f", med);
-		//
-		return -1;
+		med = (sptr->item + hmd) / 2;
+	} else {
+		while(fptr != NULL && fptr->next != NULL) {
+			fptr = fptr->next->next;
+			sptr = sptr->next;
+		}
+		med = sptr->item;
 	}
 	
-	printf("\t\t\t2\tHln: %i", hln);
-	for(int i = 0; i <= hln; i++) {
-		med = ptr->item;
-		ptr = ptr->next;
-	}
-	printf("\nMedian1\t: %f", med);
+	printf("\nMedian\t\t  : %f", med);
 }
 
-DataStore mode(Statistician s) {
+DataStore mode(Statistician s, int len) {
+	nodePtr fPtr = (nodePtr)malloc(sizeof(struct node));
+	nodePtr sPtr = (nodePtr)malloc(sizeof(struct node));
 	
+	sPtr = s->next;
+	
+	int i, j, k=0, c=1, b[20];
+	float mod, max=0;
+	
+	for (fPtr = s->next; fPtr->next != NULL; fPtr = fPtr->next)
+    {
+        mod = 0;
+        for (sPtr = fPtr->next; sPtr != NULL; sPtr = sPtr->next)
+        {
+            if (fPtr->item == sPtr->item) {
+                mod++;
+            }
+        }
+        if ((mod > max) && (mod != 0)) {
+        	k=0;
+            max = mod;
+            b[k] = fPtr->item;
+            k++;
+        }
+        else if (mod == max) {
+            b[k] = fPtr->item;
+            k++;
+        }
+    }
+    for (fPtr = s->next, i = 0; fPtr != NULL || i < len; fPtr = fPtr->next, i++)
+    {
+        if (fPtr->item == b[i]) 
+            c++;
+        }
+        if (c == len)
+            printf("\nMode\t\t  : There is no mode");
+        else
+        {
+            printf("\nMode\t\t  : ");
+            for (i = 0; i < k; i++)
+                printf("%d ",b[i]);
+        }
 }
 
 float variance(Statistician s) {
+	float sum = 0, n = 0, var = 0;
+	nodePtr ptr = s;
+	ptr = ptr->next;
 	
+	while(ptr != NULL) {
+		sum = sum + pow(ptr->item - mea, 2);
+		ptr = ptr->next;
+		n++;
+	}
+	var = sum / n;
+	printf("\nVariance\t  : %f", var);
 }
 
 float standardDeviation(Statistician s) {
+	float sum = 0, n = 0, std = 0;
+	nodePtr ptr = s;
+	ptr = ptr->next;
 	
+	while(ptr != NULL) {
+		sum = sum + pow(ptr->item - mea, 2);
+		ptr = ptr->next;
+		n++;
+	}
+	std = sqrt(sum / n);
+	printf("\nStandard Deviation: %f", std);
+}
+
+void sort(Statistician s) {
+    nodePtr nex = (nodePtr)malloc(sizeof(struct node));
+    nodePtr current = (nodePtr)malloc(sizeof(struct node));
+    int swapped, swap;
+
+    do{
+        swapped = 0;
+
+        for (current = s->next; current->next != NULL;  current = current->next) {
+       
+            nex = current->next;
+      
+            if (current->item > nex->item) {
+                swap  = nex->item;
+                nex->item  = current->item;
+                current->item  = swap;
+                swapped = 1;
+            }
+        }
+    }while(swapped == 1);
 }

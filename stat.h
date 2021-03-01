@@ -19,6 +19,8 @@ struct node {
 typedef nodePtr Statistician, DataStore;
 Statistician head;
 
+float mea = 0;
+
 int selection(int sel, int stat);
 
 Statistician newStatistician();
@@ -33,10 +35,10 @@ int maximum(Statistician s);
 int range(Statistician s, int min, int max);
 float mean(Statistician s);
 float median(Statistician s, int len);
-DataStore mode(Statistician s);
+DataStore mode(Statistician s, int len);
 float variance(Statistician s);
 float standardDeviation(Statistician s);
 
-void swap(DataStore a, DataStore b);
+void sort(Statistician s);
 
 #endif
