@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <limits.h>
+#include <math.h>
 
 typedef bool Boolean;
 typedef struct node *nodePtr;
@@ -30,11 +30,13 @@ Boolean isEmpty(Statistician s);
 
 int minimum(Statistician s);
 int maximum(Statistician s);
-int range(Statistician s);
+int range(Statistician s, int min, int max);
 float mean(Statistician s);
-float median(Statistician s);
+float median(Statistician s, int len);
 DataStore mode(Statistician s);
 float variance(Statistician s);
 float standardDeviation(Statistician s);
+
+void swap(DataStore a, DataStore b);
 
 #endif
