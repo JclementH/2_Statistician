@@ -210,8 +210,8 @@ void displayData(Statistician s) {
 	int min, max, len;
 	nodePtr ptr = s;
 	//
-	if(s == NULL) {
-		printf("List is empty\n");
+	if(s->next == NULL) {
+		printf("STATISTICIAN DATA : NO DATA!\n");
 		return;
 	}
 	//Otherwise
