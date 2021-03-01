@@ -175,7 +175,7 @@ void add(Statistician s, int x) {
 	inn->next = NULL;
 	ptr = s;
 	
-	if(ptr->next == NULL) {
+	if(s == NULL) {
 		s = inn;
 	}
 	
@@ -190,6 +190,7 @@ void removE(Statistician s, int x) {
 }
 
 void displayData(Statistician s) {
+	int min, max, len;
 	nodePtr ptr = s;
 	//
 	if(s == NULL) {
@@ -204,11 +205,12 @@ void displayData(Statistician s) {
 		ptr = ptr->next;
 	}
 	//
-	minimum(s);
-	maximum(s);
-	range(s);
-	mean(s);
-	median(s);
+	min = minimum(s);
+	max = maximum(s);
+	range(s, min, max);
+	len = mean(s);
+	printf("\nLengthd\t: %i", len);
+	median(s, len);
 	mode(s);
 	variance(s);
 	standardDeviation(s);
@@ -218,33 +220,96 @@ void displayData(Statistician s) {
 }
 
 int minimum(Statistician s) {
-	int min = INT_MIN;
+	int min = s->item;
 	nodePtr ptr = s;
 	
-	ptr = ptr->next;
-	while(ptr) {
-		if(ptr->item < min) {
+	while(ptr != NULL) {
+		if(min > ptr->item) {
 			min = ptr->item;
 		}
 		ptr = ptr->next;
 	}
-	printf("Minimum\t: %i\n", min);
+	printf("\nMinimum\t: %i", min);
+	//
+	return min;
 }
 
 int maximum(Statistician s) {
+	int max = s->next->item;
+	nodePtr ptr = s;
+	ptr = ptr->next;
 	
+	while(ptr != NULL) {
+		if(max < ptr->item) {
+			max = ptr->item;
+		}
+		ptr = ptr->next;
+	}
+	printf("\nMaximum\t: %i", max);
+	//
+	return max;
 }
 
-int range(Statistician s) {
+int range(Statistician s, int min, int max) {
+	int ran = 0;
+	ran = max - min;
 	
+	printf("\nRange\t: %i", ran);
 }
 
 float mean(Statistician s) {
+	float sum = 0, mea = 0, n = 0;
+	int N = 0;
+	nodePtr ptr = s;
+	ptr = ptr->next;
 	
+	while(ptr != NULL) {
+		sum = sum + ptr->item;
+		ptr = ptr->next;
+		n++;
+	}
+	mea = sum / n;
+	printf("\nMean\t: %f", mea);
+	//
+	N = n;
+	printf("\nLengthr\t: %i", N);
+	return N;
 }
 
-float median(Statistician s) {
+float median(Statistician s, int len) {
+	int hln = 0;
+	float med = 0;
+	nodePtr ptr = s;
+	ptr = ptr->next;
 	
+	printf("\nLengthm\t: %i", len);
+	
+	hln = len / 2;
+	if((hln % 2) == 0) {
+		printf("\t\t\t2\tHln: %i", hln);
+		int pln = hln - 1;
+		float pmd = 0;
+		
+		for(int i = 0; i <= hln; i++) {
+			med = ptr->item;
+			if(i == pln) {
+				pmd = ptr->item;
+			}
+			ptr = ptr->next;
+		}
+		med = (pmd + med) / 2;
+		
+		printf("\nMedian2\t: %f", med);
+		//
+		return -1;
+	}
+	
+	printf("\t\t\t2\tHln: %i", hln);
+	for(int i = 0; i <= hln; i++) {
+		med = ptr->item;
+		ptr = ptr->next;
+	}
+	printf("\nMedian1\t: %f", med);
 }
 
 DataStore mode(Statistician s) {
